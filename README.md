@@ -8,11 +8,7 @@ In India, the industrial classification of the workforce is essential to underst
 2) The classical machine learning tasks like Data Exploration, Data Cleaning, Feature Engineering, Model Building and Model Testing. Use Natural Language Processing for analyzing the various core industries and group the business categories like Retail, Poultry, Agriculture, Manufacturing etc
 
 # Results:
-
 Develop a dashboard app with streamlit using plotly to visualize the workers population of various industries with respect to various geographies and Analyze some Facts and Figures for the Business Problem
-
-# Dataset:
-Dataset_Link: Data set
 
 # About Dataset:
 Dataset contains the state wise counts of industrial classification of main and marginal workers of males and females who work under different works like manufacturing plastic products, rubber products, chemicals, furniture and constructions of buildings, retails etc..

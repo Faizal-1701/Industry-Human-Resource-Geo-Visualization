@@ -205,20 +205,7 @@ elif selected == "Feature Engineering ":
         mse
         st.markdown(":green[R-squared (R2)]")
         r2
-        st.markdown("## :rainbow[Natural Language Processing]") 
-        cleaning_1(data)
-        # Tokenization
-        series = ','.join(data['NIC Name'])
-        tokens = word_tokenize(series)
-        # Remove stopwords
-        additional_stopwords = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '-', '=', '/', '\\', '|', ';', ':', '"', "'", '<', '>', ',', '.', '?', '[', ']', '{', '}']
-        stop_words = set(stopwords.words('english') + additional_stopwords)
-        filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
-
-        # Word frequency analysis
-        word_freq = Counter(filtered_tokens)
-        st.dataframe(word_freq.most_common(20))  # Print the 10 most common words
-
+      
 elif selected == "Data Visualization":
     cleaning_1(data)
     st.markdown('## :green[Data Visualization]')  

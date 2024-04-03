@@ -5,11 +5,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import plotly.express as px
 import numpy as np
-from sklearn.tree import DecisionTreeRegressor
 import nltk
 from nltk.tokenize import word_tokenize
 nltk.download('stopwords')
@@ -50,6 +50,7 @@ def cleaning_1(data):
         data[cl] = data[cl].str.replace("`",'').str.replace('ï»¿','')
     data['State Code'] = data['ï»¿State Code'].str.replace('ï»¿','')
     data.drop('ï»¿State Code', axis =1, inplace = True)
+    data.drop_duplicates()    
     return data
 
 if selected == "Data Exploration & Cleaning":
@@ -58,25 +59,20 @@ if selected == "Data Exploration & Cleaning":
             st.markdown("## :green[Data Cleaning]")    
             st.markdown("## :rainbow[Head of the Dataset Before cleaning]")
             st.write(data.head())
+            print(data.info())
             cleaning_1(data)
             st.markdown("## :rainbow[Head of the Dataset After cleaning]")
-            data['Main Workers - Total - Males'] = pd.to_numeric(data['Main Workers - Total - Males'], errors='coerce').fillna(0)
-            data['Main Workers - Total - Females'] = pd.to_numeric(data['Main Workers - Total - Females'], errors='coerce').fillna(0)
             st.dataframe(data.head())
             st.write(data.shape)
             st.markdown("### :rainbow[Null Values in Each Columns]")
             st.write(data.isnull().sum())
+            st.markdown("### :green[There is No-Null Values]")
             st.markdown("## :rainbow[Descriptive Statistics]")
             st.write(data.describe().T)
 
-            data.fillna(data.mean(numeric_only=True), inplace=True)  # For numerical columns
-            data.fillna('Unknown', inplace=True)  # For categorical columns
             # Normalize data (Example: Min-Max scaling)
             scaler = MinMaxScaler()
             data[['Main Workers - Total -  Persons']] = scaler.fit_transform(data[['Main Workers - Total -  Persons']])
-
-            # Convert categorical data to numerical (Example: One-hot encoding)
-            data = pd.get_dummies(data, columns=['State Code'])
             
             # Split data
             X = data.drop('Main Workers - Total -  Persons', axis=1)
@@ -84,7 +80,7 @@ if selected == "Data Exploration & Cleaning":
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
                 # Visualize distribution
             st.markdown("## :rainbow[Categorical Data Consistency]")
-            categorical_columns = ['State Code', 'District Code', 'India/States Division Group', 'Class', 'NIC Name']
+            categorical_columns = ['State Code', 'District Code', 'India/States', 'Division', 'Group', 'Class', 'NIC Name']
             for col in categorical_columns:
                 if col in data:
                     st.write(f":green[Unique values in {col}:]")
@@ -92,7 +88,9 @@ if selected == "Data Exploration & Cleaning":
 
                     # Show effect of One-Hot Encoding
             if st.checkbox(" :green[Show One-Hot Encoded Data]"):
-                st.write("### :rainbow[One-Hot Encoded Data]")
+                # Convert categorical data to numerical (Example: One-hot encoding)
+                data = pd.get_dummies(data, columns=['State Code'])
+                st.write("### :rainbow[One-Hot Encoded Data]") 
                 st.write(data)
                 # Group the data by industry division and sum up the number of main workers for each division
                 industry_division_totals = data.groupby('Division')['Main Workers - Total -  Persons'].sum().sort_values(ascending=False)
@@ -146,6 +144,7 @@ elif selected == "Statistical Metrics":
     st.markdown("### :rainbow[Correlation matrix]")
     correlation_matrix = data.corr(numeric_only=True)
     correlation_matrix
+    st.set_option('deprecation.showPyplotGlobalUse', False)
     plt.figure(figsize=(25,15))
     sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap='coolwarm', square=True)
     plt.title('Correlation Matrix')
@@ -181,7 +180,7 @@ elif selected == "Feature Engineering ":
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
     
-    model = st.selectbox("please select your model",options=['Linear Regression Model', "DecisionTreeRegression Model"])
+    model = st.selectbox("Please select your model",options=['Linear Regression Model', "DecisionTreeRegression Model"])
     if model == 'Linear Regression Model':
         st.markdown("### :rainbow[Using Linear Regression Model]")
         model = LinearRegression()
